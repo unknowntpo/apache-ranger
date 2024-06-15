@@ -16,72 +16,61 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-if [ "${BRANCH}" == "" ]
-then
-  BRANCH=master
+if [ "${BRANCH}" == "" ]; then
+	BRANCH=master
 fi
 
-if [ "${GIT_URL}" == "" ]
-then
-  GIT_URL=https://github.com/apache/ranger.git
+if [ "${GIT_URL}" == "" ]; then
+	GIT_URL=https://github.com/apache/ranger.git
 fi
 
-if [ "${PROFILE}" != "" ]
-then
-  ARG_PROFILES="-P${PROFILE}"
+if [ "${PROFILE}" != "" ]; then
+	ARG_PROFILES="-P${PROFILE}"
 fi
 
-if [ "${SKIPTESTS}" == "" ]
-then
-  ARG_SKIPTESTS="-DskipTests"
+if [ "${SKIPTESTS}" == "" ]; then
+	ARG_SKIPTESTS="-DskipTests"
 else
-  ARG_SKIPTESTS="-DskipTests=${SKIPTESTS}"
+	ARG_SKIPTESTS="-DskipTests=${SKIPTESTS}"
 fi
 
-if [ "${BUILD_HOST_SRC}" == "" ]
-then
-  BUILD_HOST_SRC=true
+if [ "${BUILD_HOST_SRC}" == "" ]; then
+	BUILD_HOST_SRC=true
 fi
 
 export MAVEN_OPTS="-Xms2g -Xmx2g"
 export M2=/home/ranger/.m2
 
+if [ "${BUILD_HOST_SRC}" == "true" ]; then
+	if [ ! -f /home/ranger/src/pom.xml ]; then
+		echo "ERROR: BUILD_HOST_SRC=${BUILD_HOST_SRC}, but /home/ranger/src/pom.xml is not found "
+		exit 1
+	fi
 
-if [ "${BUILD_HOST_SRC}" == "true" ]
-then
-  if [ ! -f /home/ranger/src/pom.xml ]
-  then
-    echo "ERROR: BUILD_HOST_SRC=${BUILD_HOST_SRC}, but /home/ranger/src/pom.xml is not found "
-    exit 1
-  fi
+	echo "Building from /home/ranger/src"
 
-  echo "Building from /home/ranger/src"
-
-  cd /home/ranger/src
+	cd /home/ranger/src
 else
-  echo "Building ${BRANCH} branch from ${GIT_URL}"
+	echo "Building ${BRANCH} branch from ${GIT_URL}"
 
-  cd /home/ranger/git
+	cd /home/ranger/git
 
-  if [ -d ranger ]
-  then
-    renamedDir=ranger-`date +"%Y%m%d-%H%M%S"`
+	if [ -d ranger ]; then
+		renamedDir=ranger-$(date +"%Y%m%d-%H%M%S")
 
-    echo "Renaming existing directory `pwd`/ranger to ${renamedDir}"
+		echo "Renaming existing directory $(pwd)/ranger to ${renamedDir}"
 
-    mv ranger $renamedDir
-  fi
+		mv ranger $renamedDir
+	fi
 
-  git clone --single-branch --branch ${BRANCH} ${GIT_URL}
+	git clone --single-branch --branch ${BRANCH} ${GIT_URL}
 
-  cd /home/ranger/git/ranger
+	cd /home/ranger/git/ranger
 
-  for patch in `ls -1 /home/ranger/patches | sort`
-  do
-    echo "applying patch /home/ranger/patches/${patch}"
-    git apply /home/ranger/patches/${patch}
-  done
+	for patch in $(ls -1 /home/ranger/patches | sort); do
+		echo "applying patch /home/ranger/patches/${patch}"
+		git apply /home/ranger/patches/${patch}
+	done
 fi
 
 mvn ${ARG_PROFILES} ${BUILD_OPTS} ${ARG_SKIPTESTS} -DskipDocs clean package
