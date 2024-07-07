@@ -54,7 +54,8 @@ jobs:
       - name: Create user and set permissions
         run: |
           sudo useradd ranger
-          sudo passwd -d ranger
+          ls -la .
+          # sudo passwd -d ranger
           # sudo usermod -aG sudo ranger
           # sudo chown -R ranger:ranger "$HOME"
       - name: Verify user creation
