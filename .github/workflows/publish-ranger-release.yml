@@ -55,8 +55,8 @@ jobs:
         run: |
           sudo useradd ranger
           sudo passwd -d ranger
-          sudo usermod -aG sudo ranger
-          sudo chown -R ranger:ranger "$HOME"
+          # sudo usermod -aG sudo ranger
+          # sudo chown -R ranger:ranger "$HOME"
       - name: Verify user creation
         run: |
           id ranger
