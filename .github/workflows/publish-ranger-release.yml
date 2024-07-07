@@ -61,7 +61,7 @@ jobs:
       - name: Verify user creation
         run: |
           id ranger
-          ls -l /home/ranger
+          # ls -l /home/ranger
       - name: Build and run Docker Compose
         run: |
           cd dev-support/ranger-docker
