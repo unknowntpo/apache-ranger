@@ -7,7 +7,6 @@ services:
       args:
         - RANGER_BUILD_JAVA_VERSION=${RANGER_BUILD_JAVA_VERSION}
     image: ranger-build
-    user: ${MY_UID}:${MY_GID}
     container_name: ranger-build
     hostname: ranger-build.example.com
     networks:
