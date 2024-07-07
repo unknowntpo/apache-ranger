@@ -73,8 +73,6 @@ jobs:
           sudo mkdir -p $HOME/.m2/repository
           sudo chown -R ranger:ranger $HOME/.m2
 
-          ls -la $HOME/ranger/
-
           # set some env
           export DOCKER_BUILDKIT=1
           export COMPOSE_DOCKER_CLI_BUILD=1
