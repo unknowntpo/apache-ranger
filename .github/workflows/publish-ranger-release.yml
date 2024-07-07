@@ -56,19 +56,11 @@ jobs:
           sudo useradd ranger
           sudo passwd -d ranger
           sudo usermod -aG sudo ranger
-          sudo chown -R ranger:ranger $HOME
+          sudo chown -R ranger:ranger "$HOME"
       - name: Verify user creation
         run: |
           id ranger
           ls -l /home/ranger
-      - name: Switch to ranger user and perform actions
-        run: |
-          sudo -u ranger bash << EOF
-            echo "Current user: $(whoami)"
-            echo "Home directory: $HOME"
-            pwd
-            # Add more commands here that you want to run as the ranger user
-          EOF
       - name: Build and run Docker Compose
         run: |
           cd dev-support/ranger-docker
