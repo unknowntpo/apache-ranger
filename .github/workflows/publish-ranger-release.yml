@@ -71,7 +71,7 @@ jobs:
 
           # grant permission because docker-compose will mount on .m2
           sudo mkdir -p $HOME/ranger/.m2/repository
-          chown -R ranger:ranger $HOME/ranger/.m2
+          sudo chown -R ranger:ranger $HOME/ranger/.m2
 
           # set some env
           export DOCKER_BUILDKIT=1
