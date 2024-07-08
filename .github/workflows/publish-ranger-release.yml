@@ -24,10 +24,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      - name: Set up Docker Compose
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -yq docker-compose
       - name: Check groups of runner
         run: |
           groups runner
@@ -63,7 +59,7 @@ jobs:
           export RANGER_DB_TYPE=mysql
 
           # start building jar files
-          docker-compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up
+          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
