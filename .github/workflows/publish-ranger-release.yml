@@ -58,6 +58,11 @@ jobs:
           export COMPOSE_DOCKER_CLI_BUILD=1
           export RANGER_DB_TYPE=mysql
 
+          # Prevent buildx to pull remote image
+          # https://github.com/moby/buildkit/issues/2343#issuecomment-1311890308
+          docker buildx prune
+          docker buildx use default
+
           # start building jar files
           docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up  --pull never
       - name: Create Release
