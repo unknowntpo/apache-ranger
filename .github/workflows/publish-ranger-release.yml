@@ -28,6 +28,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
+      - name: Check groups of runner
+        run: |
+          groups runner
       - name: Create user and set permissions
         run: |
           sudo useradd ranger
