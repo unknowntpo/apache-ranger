@@ -46,10 +46,12 @@ jobs:
           cd dev-support/ranger-docker
 
           # download archives
-          chmod +x download-archives.sh && ./download-archives.sh
+          # chmod +x download-archives.sh && ./download-archives.sh
 
           # peek users
           cat /etc/passwd
+
+          pwd
 
           # grant permission because docker-compose will mount on .m2
           sudo mkdir -p $HOME/.m2/repository
