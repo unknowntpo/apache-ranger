@@ -26,7 +26,7 @@ jobs:
 
       - name: Set up Docker Compose
         run: |
-          sudo apt-get update
+          sudo apt-get update -q
           sudo apt-get install -yq docker-compose
       - name: Check groups of runner
         run: |
@@ -35,10 +35,8 @@ jobs:
         run: |
           sudo useradd ranger
           ls -la .
-          sudo usermod -aG sudo ranger
-          # sudo passwd -d ranger
-          # sudo usermod -aG sudo ranger
-          # sudo chown -R ranger:ranger "$HOME"
+          sudo usermod -aG docker ranger
+          sudo usermod -aG adm ranger
       - name: Verify user creation
         run: |
           id ranger
@@ -46,6 +44,8 @@ jobs:
       - name: Build and run Docker Compose
         run: |
           cd dev-support/ranger-docker
+
+          ls -la .
 
           # peek users
           cat /etc/passwd
