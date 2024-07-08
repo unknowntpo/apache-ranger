@@ -32,6 +32,7 @@ jobs:
         run: |
           sudo useradd ranger
           ls -la .
+          sudo usermod -aG sudo ranger
           # sudo passwd -d ranger
           # sudo usermod -aG sudo ranger
           # sudo chown -R ranger:ranger "$HOME"
