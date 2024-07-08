@@ -1,32 +1,9 @@
 name: Publish Docker Image
 
 on:
-  workflow_dispatch:
-    # inputs:
-    #   image:
-    #     type: choice
-    #     description: 'Choose the image to build'
-    #     required: true
-    #     default: 'gravitino'
-    #     options:
-    #       - 'gravitino'
-    #       - 'gravitino-ci-hive'
-    #       - 'gravitino-ci-kerberos-hive'
-    #       - 'gravitino-ci-trino'
-    #       - 'gravitino-ci-doris'
-    #       - 'gravitino-ci-ranger'
-    #       - 'trino'
-    #       - 'hive'
-    #       - 'ranger'
-    #   # tag:
-    #   #   description: 'Docker tag to apply to this image'
-    #   #   required: true
-    #   #   type: string
-    #   token:
-    #     description: 'Publish Docker token'
-    #     required: true
-    #     type: string
-
+  push:
+    tags:
+    - 'v*'
 jobs:
   build-and-publish-ranger-release:
     runs-on: ubuntu-latest
@@ -86,9 +63,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          release_name: "Release ${{ github.sha }}"
-          body: "Automated release for commit ${{ github.sha }}"
+          tag_name: ${{ github.ref_name }}
+          release_name: "Release ${{ github.ref_name }}"
+          body: "Automated release for commit ${{ github.ref_name }}"
           draft: false
           prerelease: false
 
@@ -101,10 +78,3 @@ jobs:
           asset_path: ./dist/*
           asset_name: $(basename ${{ runner.path }})
           asset_content_type: application/octet-stream
-      # - uses: actions/setup-java@v3
-      #   with:
-      #     java-version: '8'
-      #     distribution: 'temurin'
-
-      # - name: Build and Push the Docker image
-      #   run: sudo rm -rf /usr/local/lib/android && sudo rm -rf /opt/hostedtoolcache/CodeQL && ./dev/docker/build-docker.sh --platform all --type ${image_type} --image ${image_name} --tag ${{ github.event.inputs.tag }} --latest
