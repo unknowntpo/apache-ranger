@@ -54,7 +54,7 @@ jobs:
           pwd
 
           # grant permission because docker-compose will mount on .m2
-          mkdir -p $HOME/.m2/repository
+          # mkdir -p $HOME/.m2/repository
           # sudo chown -R ranger:docker $HOME/.m2
 
           # set some env
