@@ -45,14 +45,15 @@ jobs:
         run: |
           cd dev-support/ranger-docker
 
-          ls -la .
+          # download archives
+          chmod +x download-archives.sh && ./download-archives.sh
 
           # peek users
           cat /etc/passwd
 
           # grant permission because docker-compose will mount on .m2
           sudo mkdir -p $HOME/.m2/repository
-          sudo chown -R ranger:ranger $HOME/.m2
+          sudo chown -R ranger:docker $HOME/.m2
 
           # set some env
           export DOCKER_BUILDKIT=1
