@@ -12,7 +12,8 @@ services:
     networks:
       - ranger
     volumes:
-      - ${HOME:-~}/.m2:/home/ranger/.m2:delegated
+      # - ${HOME:-~}/.m2:/home/ranger/.m2:delegated
+      - m2:/home/ranger/.m2
       - ./scripts:/home/ranger/scripts
       - ./patches:/home/ranger/patches
       - ./dist:/home/ranger/dist:delegated
@@ -31,3 +32,7 @@ services:
 networks:
   ranger:
     name: rangernw
+
+volumes:
+  m2:
+  
