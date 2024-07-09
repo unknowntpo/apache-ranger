@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile.ranger-build
       args:
         - RANGER_BUILD_JAVA_VERSION=${RANGER_BUILD_JAVA_VERSION}
+    user: "${UID}:${GID}"
     image: ranger-build
     container_name: ranger-build
     hostname: ranger-build.example.com

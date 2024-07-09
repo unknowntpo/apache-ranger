@@ -64,7 +64,9 @@ jobs:
           docker buildx use default
 
           # start building jar files
-          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up  --pull never
+          export UID=$(id -u)
+          export GID=$(id -g)
+          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
