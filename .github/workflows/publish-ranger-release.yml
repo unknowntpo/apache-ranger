@@ -60,7 +60,7 @@ jobs:
 
           # Prevent buildx to pull remote image
           # https://github.com/moby/buildkit/issues/2343#issuecomment-1311890308
-          docker buildx prune
+          docker buildx prune -f
           docker buildx use default
 
           # start building jar files
