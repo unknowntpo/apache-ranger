@@ -74,11 +74,11 @@ jobs:
           docker buildx use default
 
           # start building jar files
-          mkdir -p dist
-          echo 'hello' > ./dist/hello.txt
-          echo 'world' > ./dist/world.txt
+          #   mkdir -p dist
+          # echo 'hello' > ./dist/hello.txt
+          # echo 'world' > ./dist/world.txt
 
-          exit 0
+          # exit 0
 
           
           docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
