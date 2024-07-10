@@ -53,10 +53,6 @@ if [ "${BUILD_HOST_SRC}" == "true" ]; then
 else
 	echo "Building ${BRANCH} branch from ${GIT_URL}"
 
-	echo "I am ${whoami}"
-
-	ls -la /home/ranger
-
 	cd /home/ranger/git
 
 	if [ -d ranger ]; then
