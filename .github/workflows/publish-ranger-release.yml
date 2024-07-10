@@ -6,11 +6,11 @@ on:
     - 'v*'
 
 permissions:
-  id-token: write
-  contents: read
-  issues: write
+  # id-token: write
+  contents: write
+  # issues: write
   packages: write
-  pull-requests: write
+  # pull-requests: write
 
 jobs:
   build-and-publish-ranger-release:
@@ -86,9 +86,9 @@ jobs:
           mkdir -p ./dist
 
           # copy package from volume to host
-          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist $HOME
+          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist /
       - name: List dist directory
-        run: ls -R $HOME/dist
+        run: ls -R /dist
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -105,7 +105,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: $HOME/dist/*
+          file: /dist/*
           tag: ${{ github.ref }}
 
 #     - name: Upload Release Assets
