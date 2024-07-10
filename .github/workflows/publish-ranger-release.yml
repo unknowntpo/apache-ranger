@@ -74,9 +74,9 @@ jobs:
           docker buildx use default
 
           # start building jar files
-          mkdir -p $HOME/dist
-          echo 'hello' > $HOME/dist/hello.txt
-          echo 'world' > $HOME/dist/world.txt
+          mkdir -p dist
+          echo 'hello' > ./dist/hello.txt
+          echo 'world' > ./dist/world.txt
 
           exit 0
 
@@ -86,9 +86,9 @@ jobs:
           mkdir -p ./dist
 
           # copy package from volume to host
-          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist /
+          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist .
       - name: List dist directory
-        run: ls -R /dist
+        run: ls -R dev-support/ranger-docker/dist
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -105,7 +105,7 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file_glob: true
-          file: /dist/*
+          file: ./dev-support/ranger-docker/dist/*
           tag: ${{ github.ref }}
 
 #     - name: Upload Release Assets
