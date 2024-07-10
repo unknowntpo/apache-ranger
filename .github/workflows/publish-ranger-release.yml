@@ -5,7 +5,12 @@ on:
     tags:
     - 'v*'
 
-permissions: write-all
+permissions:
+  id-token: write
+  contents: read
+  issues: write
+  packages: write
+  pull-requests: write
 
 jobs:
   build-and-publish-ranger-release:
