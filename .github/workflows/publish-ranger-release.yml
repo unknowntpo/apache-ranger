@@ -69,6 +69,8 @@ jobs:
 
           docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
 
+          mkdir -p ./dist
+
           # copy package from volume to host
           docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist/* ./dist
       - name: Create Release
