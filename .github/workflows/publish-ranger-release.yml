@@ -5,11 +5,7 @@ on:
     tags:
     - 'v*'
 
-permissions:
-  contents: write
-  pull-requests: write
-  packages: write
-  repository-projects: write
+permissions: write-all
 
 jobs:
   build-and-publish-ranger-release:
@@ -76,7 +72,6 @@ jobs:
           mkdir -p $HOME/dist
           echo 'hello' > $HOME/dist/hello.txt
           echo 'world' > $HOME/dist/world.txt
-
 
           exit 0
 
