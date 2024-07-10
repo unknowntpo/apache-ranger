@@ -6,21 +6,12 @@ on:
     - 'v*'
 
 permissions:
-  # id-token: write
   contents: write
-  # issues: write
   packages: write
-  # pull-requests: write
 
 jobs:
   build-and-publish-ranger-release:
     runs-on: ubuntu-latest
-    # Add permission to publish release:
-    # Ref: https://stackoverflow.com/a/76994510
-   # defaults:
-    #   run:
-    #     working-directory: $HOME/repo
-
     timeout-minutes: 120
     env:
       input_token: ${{ github.event.inputs.token }}
@@ -40,28 +31,19 @@ jobs:
       - name: Create user and set permissions
         run: |
           sudo useradd ranger
-          ls -la .
           sudo usermod -aG docker ranger
           sudo usermod -aG adm ranger
       - name: Verify user creation
         run: |
           id ranger
-          # ls -l /home/ranger
       - name: Build and run Docker Compose
         run: |
           cd dev-support/ranger-docker
-
-          # download archives
-          # chmod +x download-archives.sh && ./download-archives.sh
 
           # peek users
           cat /etc/passwd
 
           pwd
-
-          # grant permission because docker-compose will mount on .m2
-          # mkdir -p $HOME/.m2/repository
-          # sudo chown -R ranger:docker $HOME/.m2
 
           # set some env
           export DOCKER_BUILDKIT=1
@@ -72,14 +54,6 @@ jobs:
           # https://github.com/moby/buildkit/issues/2343#issuecomment-1311890308
           docker buildx prune -f
           docker buildx use default
-
-          # start building jar files
-          #   mkdir -p dist
-          # echo 'hello' > ./dist/hello.txt
-          # echo 'world' > ./dist/world.txt
-
-          # exit 0
-
           
           docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
 
@@ -107,13 +81,3 @@ jobs:
           file_glob: true
           file: ./dev-support/ranger-docker/dist/*
           tag: ${{ github.ref }}
-
-#     - name: Upload Release Assets
-#       uses: actions/upload-release-asset@v1
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#       with:
-#         upload_url: ${{ steps.create_release.outputs.upload_url }}
-#         asset_path: $HOME/dist/*
-#         asset_name: $(basename ${{ runner.path }})
-#         asset_content_type: application/octet-stream
