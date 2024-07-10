@@ -6,11 +6,11 @@ on:
     - 'v*'
 
 permissions:
-  id-token: write
-  contents: read
-  issues: write
+  # id-token: write
+  contents: write
+  # issues: write
   packages: write
-  pull-requests: write
+  # pull-requests: write
 
 jobs:
   build-and-publish-ranger-release:
