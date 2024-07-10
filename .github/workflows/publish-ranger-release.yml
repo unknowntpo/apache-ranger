@@ -99,13 +99,19 @@ jobs:
           body: "Automated release for commit ${{ github.ref_name }}"
           draft: false
           prerelease: false
-
-      - name: Upload Release Assets
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: $HOME/dist/*
-          asset_name: $(basename ${{ runner.path }})
-          asset_content_type: application/octet-stream
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: $HOME/dist/*
+          tag: ${{ github.ref }}
+
+#     - name: Upload Release Assets
+#       uses: actions/upload-release-asset@v1
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       with:
+#         upload_url: ${{ steps.create_release.outputs.upload_url }}
+#         asset_path: $HOME/dist/*
+#         asset_name: $(basename ${{ runner.path }})
+#         asset_content_type: application/octet-stream
