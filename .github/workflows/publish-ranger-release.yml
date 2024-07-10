@@ -4,16 +4,18 @@ on:
   push:
     tags:
     - 'v*'
+
+permissions:
+  contents: write
+  pull-requests: write
+  repository-projects: write
+
 jobs:
   build-and-publish-ranger-release:
     runs-on: ubuntu-latest
     # Add permission to publish release:
     # Ref: https://stackoverflow.com/a/76994510
-    permissions:
-      contents: write
-      pull-requests: write
-      repository-projects: write
-    # defaults:
+   # defaults:
     #   run:
     #     working-directory: $HOME/repo
 
