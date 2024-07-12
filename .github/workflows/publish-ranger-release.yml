@@ -13,9 +13,6 @@ jobs:
   build-and-publish-ranger-release:
     runs-on: ubuntu-latest
     timeout-minutes: 120
-    env:
-      input_token: ${{ github.event.inputs.token }}
-      secrets_token: ${{ secrets.PUBLISH_DOCKER_TOKEN }}
     steps:
       - uses: actions/checkout@v3
 
