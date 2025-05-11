@@ -11,11 +11,11 @@ services:
     networks:
       - ranger
     volumes:
-      - ${HOME:-~}/.m2:/home/ranger/.m2:delegated
+      - ${HOME:-~}/.m2:/home/ranger/.m2:Z
       - ./scripts:/home/ranger/scripts
       - ./patches:/home/ranger/patches
-      - ./dist:/home/ranger/dist:delegated
-      - ${RANGER_HOME:-./../../}:/home/ranger/src:delegated
+      - ./dist:/home/ranger/dist:Z
+      - ${RANGER_HOME:-./../../}:/home/ranger/src:Z
     depends_on:
       - ranger-base
     environment:
