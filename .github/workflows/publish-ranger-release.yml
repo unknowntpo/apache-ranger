@@ -22,17 +22,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      - name: Check groups of runner
-        run: |
-          groups runner
-      - name: Create user and set permissions
-        run: |
-          sudo useradd ranger
-          sudo usermod -aG docker ranger
-          sudo usermod -aG adm ranger
-      - name: Verify user creation
-        run: |
-          id ranger
       - name: Build and run Docker Compose
         run: |
           cd dev-support/ranger-docker
@@ -52,12 +41,14 @@ jobs:
           docker buildx prune -f
           docker buildx use default
           
-          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
-
           mkdir -p ./dist
 
+          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
+
+          # ls -la ./dist
+
           # copy package from volume to host
-          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist .
+          # docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist .
       - name: List dist directory
         run: ls -R dev-support/ranger-docker/dist
       - name: Create Release
