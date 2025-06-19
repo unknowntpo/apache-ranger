@@ -627,13 +627,13 @@
         <profile>
             <id>ranger-trino-plugin</id>
             <modules>
-                <module>agents-audit</module>
-                <module>agents-common</module>
-                <module>agents-cred</module>
-                <module>agents-installer</module>
-                <module>credentialbuilder</module>
-                <module>ranger-plugin-classloader</module>
-                <module>ranger-util</module>
+<!--                <module>agents-audit</module>-->
+<!--                <module>agents-common</module>-->
+<!--                <module>agents-cred</module>-->
+<!--                <module>agents-installer</module>-->
+<!--                <module>credentialbuilder</module>-->
+<!--                <module>ranger-plugin-classloader</module>-->
+<!--                <module>ranger-util</module>-->
                 <module>plugin-trino</module>
                 <module>ranger-trino-plugin-shim</module>
             </modules>

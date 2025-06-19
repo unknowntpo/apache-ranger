@@ -316,17 +316,24 @@ public class RangerSystemAccessControl
     //allow
   }
 
-  public boolean canAccessCatalog(Identity identity, String catalogName) {
-    boolean can = hasPermission(createResource(catalogName), identity, TrinoAccessType.USE);
+  public boolean canAccessCatalog(SystemSecurityContext context, String catalogName) {
+    boolean can = hasPermission(createResource(catalogName), context.getIdentity(), TrinoAccessType.USE);
     if (!can) {
       LOG.debug("RangerSystemAccessControl.canAccessCatalog(" + catalogName + ") denied");
     }
     return can;
-//    if (!hasPermission(createResource(catalogName), identity, TrinoAccessType.USE)) {
-//      LOG.debug("RangerSystemAccessControl.checkCanAccessCatalog(" + catalogName + ") denied");
-//      AccessDeniedException.denyCatalogAccess(catalogName);
-//    }
   }
+//  public boolean canAccessCatalog(Identity identity, String catalogName) {
+//    boolean can = hasPermission(createResource(catalogName), identity, TrinoAccessType.USE);
+//    if (!can) {
+//      LOG.debug("RangerSystemAccessControl.canAccessCatalog(" + catalogName + ") denied");
+//    }
+//    return can;
+////    if (!hasPermission(createResource(catalogName), identity, TrinoAccessType.USE)) {
+////      LOG.debug("RangerSystemAccessControl.checkCanAccessCatalog(" + catalogName + ") denied");
+////      AccessDeniedException.denyCatalogAccess(catalogName);
+////    }
+//  }
 
   public void checkCanShowSchemas(Identity identity, String catalogName) {
     if (!hasPermission(createResource(catalogName), identity, TrinoAccessType.SHOW)) {

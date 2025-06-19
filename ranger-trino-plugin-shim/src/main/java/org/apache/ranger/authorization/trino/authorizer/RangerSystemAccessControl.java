@@ -17,6 +17,8 @@ import io.trino.spi.connector.CatalogSchemaName;
 import io.trino.spi.connector.CatalogSchemaRoutineName;
 import io.trino.spi.connector.CatalogSchemaTableName;
 import io.trino.spi.connector.SchemaTableName;
+import io.trino.spi.QueryId;
+import io.trino.spi.security.Identity;
 import io.trino.spi.security.TrinoPrincipal;
 import io.trino.spi.security.Privilege;
 import io.trino.spi.security.SystemAccessControl;
@@ -27,6 +29,8 @@ import org.apache.ranger.plugin.classloader.RangerPluginClassLoader;
 
 import javax.inject.Inject;
 import java.security.Principal;
+import java.time.Instant;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,23 +76,25 @@ public class RangerSystemAccessControl
   }
 
   @Override
-  public void checkCanSetSystemSessionProperty(SystemSecurityContext context, String propertyName) {
+  public void checkCanSetSystemSessionProperty(Identity identity, String propertyName) {
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanSetSystemSessionProperty(context, propertyName);
+      systemAccessControlImpl.checkCanSetSystemSessionProperty(identity, propertyName);
     } finally {
       deactivatePluginClassLoader();
     }
   }
 
   @Override
-  public void checkCanAccessCatalog(SystemSecurityContext context, String catalogName) {
+  public boolean canAccessCatalog(SystemSecurityContext context, String catalogName) {
+    boolean result;
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanAccessCatalog(context, catalogName);
+      result = systemAccessControlImpl.canAccessCatalog(context, catalogName);
     } finally {
       deactivatePluginClassLoader();
     }
+    return result;
   }
 
   @Override
@@ -104,10 +110,10 @@ public class RangerSystemAccessControl
   }
 
   @Override
-  public void checkCanCreateSchema(SystemSecurityContext context, CatalogSchemaName schema) {
+  public void checkCanCreateSchema(SystemSecurityContext context, CatalogSchemaName schema, Map<String, Object> properties) {
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanCreateSchema(context, schema);
+      systemAccessControlImpl.checkCanCreateSchema(context, schema, properties);
     } finally {
       deactivatePluginClassLoader();
     }
@@ -343,41 +349,41 @@ public class RangerSystemAccessControl
   }
 
   @Override
-  public void checkCanImpersonateUser(SystemSecurityContext context, String userName) {
+  public void checkCanImpersonateUser(Identity identity, String userName) {
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanImpersonateUser(context, userName);
+      systemAccessControlImpl.checkCanImpersonateUser(identity, userName);
     } finally {
       deactivatePluginClassLoader();
     }
   }
 
   @Override
-  public void checkCanExecuteQuery(SystemSecurityContext context) {
+  public void checkCanExecuteQuery(Identity identity) {
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanExecuteQuery(context);
+      systemAccessControlImpl.checkCanExecuteQuery(identity);
     } finally {
       deactivatePluginClassLoader();
     }
   }
 
   @Override
-  public void checkCanViewQueryOwnedBy(SystemSecurityContext context, String queryOwner) {
+  public void checkCanViewQueryOwnedBy(Identity identity, Identity queryOwner) {
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanViewQueryOwnedBy(context, queryOwner);
+      systemAccessControlImpl.checkCanViewQueryOwnedBy(identity, queryOwner);
     } finally {
       deactivatePluginClassLoader();
     }
   }
 
   @Override
-  public Set<String> filterViewQueryOwnedBy(SystemSecurityContext context, Set<String> queryOwners) {
-    Set<String> filteredQueryOwners;
+  public Collection<Identity> filterViewQueryOwnedBy(Identity identity, Collection<Identity> queryOwners) {
+    Collection<Identity> filteredQueryOwners;
     try {
       activatePluginClassLoader();
-      filteredQueryOwners = systemAccessControlImpl.filterViewQueryOwnedBy(context, queryOwners);
+      filteredQueryOwners = systemAccessControlImpl.filterViewQueryOwnedBy(identity, queryOwners);
     } finally {
       deactivatePluginClassLoader();
     }
@@ -385,10 +391,10 @@ public class RangerSystemAccessControl
   }
 
   @Override
-  public void checkCanKillQueryOwnedBy(SystemSecurityContext context, String queryOwner) {
+  public void checkCanKillQueryOwnedBy(Identity identity, Identity queryOwner) {
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanKillQueryOwnedBy(context, queryOwner);
+      systemAccessControlImpl.checkCanKillQueryOwnedBy(identity, queryOwner);
     } finally {
       deactivatePluginClassLoader();
     }
@@ -517,17 +523,6 @@ public class RangerSystemAccessControl
     }
   }
 
-  @Override
-  public Optional<ViewExpression> getRowFilter(SystemSecurityContext context, CatalogSchemaTableName tableName) {
-    Optional<ViewExpression> viewExpression;
-    try {
-      activatePluginClassLoader();
-      viewExpression = systemAccessControlImpl.getRowFilter(context, tableName);
-    } finally {
-      deactivatePluginClassLoader();
-    }
-    return viewExpression;
-  }
 
   @Override
   public List<ViewExpression> getRowFilters(SystemSecurityContext context, CatalogSchemaTableName tableName) {
@@ -553,17 +548,6 @@ public class RangerSystemAccessControl
     return viewExpression;
   }
 
-  @Override
-  public List<ViewExpression> getColumnMasks(SystemSecurityContext context, CatalogSchemaTableName tableName, String columnName, Type type) {
-    List<ViewExpression> viewExpressionList;
-    try {
-      activatePluginClassLoader();
-      viewExpressionList = systemAccessControlImpl.getColumnMasks(context, tableName, columnName, type);
-    } finally {
-      deactivatePluginClassLoader();
-    }
-    return viewExpressionList;
-  }
 
   @Override
   public void checkCanSetUser(Optional<Principal> principal, String userName) {
@@ -575,15 +559,6 @@ public class RangerSystemAccessControl
     }
   }
 
-  @Override
-  public void checkCanGrantExecuteFunctionPrivilege(SystemSecurityContext context, String functionName, TrinoPrincipal grantee, boolean grantOption) {
-    try {
-      activatePluginClassLoader();
-      systemAccessControlImpl.checkCanGrantExecuteFunctionPrivilege(context, functionName, grantee, grantOption);
-    } finally {
-      deactivatePluginClassLoader();
-    }
-  }
 
   @Override
   public void checkCanSetSchemaAuthorization(SystemSecurityContext context, CatalogSchemaName schema, TrinoPrincipal principal) {
@@ -627,13 +602,15 @@ public class RangerSystemAccessControl
   }
 
   @Override
-  public void checkCanExecuteFunction(SystemSecurityContext systemSecurityContext, String functionName) {
+  public boolean canExecuteFunction(SystemSecurityContext context, CatalogSchemaRoutineName functionName) {
+    boolean result;
     try {
       activatePluginClassLoader();
-      systemAccessControlImpl.checkCanExecuteFunction(systemSecurityContext, functionName);
+      result = systemAccessControlImpl.canExecuteFunction(context, functionName);
     } finally {
       deactivatePluginClassLoader();
     }
+    return result;
   }
 
   private void activatePluginClassLoader() {
