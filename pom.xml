@@ -627,15 +627,20 @@
         <profile>
             <id>ranger-trino-plugin</id>
             <modules>
-<!--                <module>agents-audit</module>-->
-<!--                <module>agents-common</module>-->
-<!--                <module>agents-cred</module>-->
-<!--                <module>agents-installer</module>-->
-<!--                <module>credentialbuilder</module>-->
-<!--                <module>ranger-plugin-classloader</module>-->
-<!--                <module>ranger-util</module>-->
+                <module>agents-audit</module>
+                <module>agents-common</module>
+                <module>agents-cred</module>
+                <module>agents-installer</module>
+                <module>credentialbuilder</module>
+                <module>ranger-plugin-classloader</module>
+                <module>ranger-util</module>
                 <module>plugin-trino</module>
                 <module>ranger-trino-plugin-shim</module>
+                <!--
+                   'distro' should be the last module. If a module gets inserted after
+                   ranger-elasticsearch-plugin-shim, make sure to update dependency in distro/pom.xml
+                -->
+                <module>distro</module>
             </modules>
         </profile>
         <profile>

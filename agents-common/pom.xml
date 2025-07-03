@@ -152,6 +152,13 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+        <!--        Nashorn not in jdk15 and above-->
+        <!--        https://stackoverflow.com/a/73987606-->
+        <dependency>
+            <groupId>org.openjdk.nashorn</groupId>
+            <artifactId>nashorn-core</artifactId>
+            <version>15.4</version>
+        </dependency>
         <!-- To be added for JDK15 and above
         <dependency>
             <groupId>org.graalvm.js</groupId>
