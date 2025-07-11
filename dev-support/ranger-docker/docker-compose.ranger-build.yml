@@ -16,7 +16,6 @@ services:
       - ./scripts:/home/ranger/scripts
       - ./patches:/home/ranger/patches
       - dist:/home/ranger/dist:Z
-      - target:/home/ranger/src/target:Z
       # mount from host project root to container's project root
       - ${RANGER_HOME:-./../../}:/home/ranger/src:Z
     depends_on:
@@ -36,4 +35,3 @@ networks:
 volumes:
   m2:
   dist:
-  target:
