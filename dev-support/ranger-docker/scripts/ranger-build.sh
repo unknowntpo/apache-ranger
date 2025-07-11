@@ -75,7 +75,7 @@ else
 
   git clone --single-branch --branch ${BRANCH} ${GIT_URL}
 
-  cd /home/ranger/git/apache-ranger
+  cd /home/ranger/git/ranger
 
   for patch in `ls -1 /home/ranger/patches | sort`
   do
