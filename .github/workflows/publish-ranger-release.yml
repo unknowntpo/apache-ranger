@@ -44,7 +44,8 @@ jobs:
           docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
 
           mkdir -p ./dist
-
+          mkdir -p ./target
+          
           # copy package from volume to host
           docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist .
       - name: List dist directory
