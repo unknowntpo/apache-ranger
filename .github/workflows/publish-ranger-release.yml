@@ -22,17 +22,6 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      - name: Check groups of runner
-        run: |
-          groups runner
-      - name: Create user and set permissions
-        run: |
-          sudo useradd ranger
-          sudo usermod -aG docker ranger
-          sudo usermod -aG adm ranger
-      - name: Verify user creation
-        run: |
-          id ranger
       - name: Build and run Docker Compose
         run: |
           cd dev-support/ranger-docker
