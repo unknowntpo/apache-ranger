@@ -84,7 +84,9 @@ else
   done
 fi
 
-mvn ${ARG_PROFILES} ${ARG_SKIPTESTS} -DskipDocs clean package
+echo "Current JDK: $(java --version | head -n 1)"
+
+mvn ${ARG_PROFILES} ${ARG_SKIPTESTS} ${BUILD_OPTS} -DskipDocs clean package
 
 mv -f target/version /home/ranger/dist/
 mv -f target/ranger-* /home/ranger/dist/
