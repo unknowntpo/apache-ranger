@@ -75,6 +75,8 @@ else
 
   git clone --single-branch --branch ${BRANCH} ${GIT_URL}
 
+  echo "we are at commit $(git rev-parse HEAD)"
+
   cd /home/ranger/git/ranger
 
   for patch in `ls -1 /home/ranger/patches | sort`
@@ -84,6 +86,9 @@ else
   done
 fi
 
+echo "PWD $(pwd)"
+echo "Git status $(git status)"
+echo "We are at commit $(git rev-parse HEAD)"
 echo "JAVA_HOME=${JAVA_HOME}"
 echo "Running command: mvn ${ARG_PROFILES} ${BUILD_OPTS} ${ARG_SKIPTESTS} -DskipDocs clean package"
 

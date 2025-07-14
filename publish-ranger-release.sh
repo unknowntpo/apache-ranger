@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -ex
+
 cd ./dev-support/ranger-docker
 
 mkdir -p ./dist
