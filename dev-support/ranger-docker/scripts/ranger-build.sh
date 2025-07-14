@@ -88,6 +88,7 @@ fi
 
 echo "PWD $(pwd)"
 echo "Git status $(git status)"
+echo "Maven version $(mvn --version)"
 echo "We are at commit $(git rev-parse HEAD)"
 echo "JAVA_HOME=${JAVA_HOME}"
 echo "Running command: mvn ${ARG_PROFILES} ${BUILD_OPTS} ${ARG_SKIPTESTS} -DskipDocs clean package"

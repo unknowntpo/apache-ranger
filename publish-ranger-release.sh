@@ -6,6 +6,8 @@ cd ./dev-support/ranger-docker
 
 mkdir -p ./dist
 
+echo "pwd: $(pwd)"
+
 # run command in subshell to avoid environment variable pollution
 (
   export DOCKER_BUILDKIT=1
