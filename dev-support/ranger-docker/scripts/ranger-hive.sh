@@ -16,7 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-service ssh start
+if [ "${OS_NAME}" = "UBUNTU" ]; then
+  service ssh start
+fi
 
 if [ ! -e ${HIVE_HOME}/.setupDone ]
 then
@@ -24,20 +26,43 @@ then
   su -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys" hdfs
   su -c "chmod 0600 ~/.ssh/authorized_keys" hdfs
 
+  if [ "${OS_NAME}" = "RHEL" ]; then
+    ssh-keygen -A
+    /usr/sbin/sshd
+  fi
+
   su -c "ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa" yarn
   su -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys" yarn
   su -c "chmod 0600 ~/.ssh/authorized_keys" yarn
 
+  # pdsh is unavailable with microdnf in rhel based image.
   echo "ssh" > /etc/pdsh/rcmd_default
 
-  ${RANGER_SCRIPTS}/ranger-hive-setup.sh
 
-  touch ${HIVE_HOME}/.setupDone
+  if "${RANGER_SCRIPTS}"/ranger-hive-setup.sh;
+  then
+    touch "${HIVE_HOME}"/.setupDone
+  else
+    echo "Ranger Hive Setup Script didn't complete proper execution."
+  fi
 fi
 
-su -c "${HIVE_HOME}/bin/hiveserver2" hive
+cd "${HIVE_HOME}" || exit
 
-HIVESERVER2_PID=`ps -ef  | grep -v grep | grep -i "org.apache.hive.service.server.HiveServer2" | awk '{print $2}'`
+# Start Hive MetaStore
+su -c "nohup ${HIVE_HOME}/bin/hive --service metastore > metastore.log 2>&1 &" hive
+
+# Start HiveServer2
+su -c "nohup ${HIVE_HOME}/bin/hiveserver2 > hive-server2.log 2>&1 &" hive
+
+sleep 10
+
+HIVE_SERVER2_PID=`ps -ef  | grep -v grep | grep -i "org.apache.hive.service.server.HiveServer2" | awk '{print $2}'`
 
 # prevent the container from exiting
-tail --pid=$HIVESERVER2_PID -f /dev/null
+if [ -z "$HIVE_SERVER2_PID" ]
+then
+  echo "The HiveServer2 process probably exited, no process id found!"
+else
+  tail --pid="$HIVE_SERVER2_PID" -f /dev/null
+fi

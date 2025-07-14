@@ -16,19 +16,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-service ssh start
+if [ "${OS_NAME}" = "UBUNTU" ]; then
+  service ssh start
+fi
 
 if [ ! -e ${HBASE_HOME}/.setupDone ]
 then
+  if [ "${OS_NAME}" = "RHEL" ]; then
+      ssh-keygen -A
+      /usr/sbin/sshd
+  fi
+
   su -c "ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa" hbase
   su -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys" hbase
   su -c "chmod 0600 ~/.ssh/authorized_keys" hbase
 
+  # pdsh is unavailable with microdnf in rhel based image.
   echo "ssh" > /etc/pdsh/rcmd_default
 
-  ${RANGER_SCRIPTS}/ranger-hbase-setup.sh
 
-  touch ${HBASE_HOME}/.setupDone
+  if "${RANGER_SCRIPTS}"/ranger-hbase-setup.sh;
+  then
+    touch "${HBASE_HOME}"/.setupDone
+  else
+    echo "Ranger Hbase Setup Script didn't complete proper execution."
+  fi
 fi
 
 su -c "${HBASE_HOME}/bin/start-hbase.sh" hbase
@@ -36,4 +48,9 @@ su -c "${HBASE_HOME}/bin/start-hbase.sh" hbase
 HBASE_MASTER_PID=`ps -ef  | grep -v grep | grep -i "org.apache.hadoop.hbase.master.HMaster" | awk '{print $2}'`
 
 # prevent the container from exiting
-tail --pid=$HBASE_MASTER_PID -f /dev/null
+if [ -z "$HBASE_MASTER_PID" ]
+then
+  echo "The HBase process probably exited, no process id found!"
+else
+  tail --pid=$HBASE_MASTER_PID -f /dev/null
+fi
