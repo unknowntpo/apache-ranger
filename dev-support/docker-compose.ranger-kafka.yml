@@ -1,0 +1,29 @@
+services:
+  ranger-kafka:
+    build:
+      context: .
+      dockerfile: Dockerfile.ranger-kafka
+      args:
+        - KAFKA_VERSION=${KAFKA_VERSION}
+        - KAFKA_PLUGIN_VERSION=${KAFKA_PLUGIN_VERSION}
+    image: ranger-kafka
+    container_name: ranger-kafka
+    hostname: ranger-kafka.example.com
+    stdin_open: true
+    tty: true
+    networks:
+      - ranger
+    ports:
+      - "6667:6667"
+    depends_on:
+      ranger:
+        condition: service_started
+      ranger-zk:
+        condition: service_started
+    environment:
+      - KAFKA_VERSION
+      - KAFKA_PLUGIN_VERSION
+
+networks:
+  ranger:
+    name: rangernw

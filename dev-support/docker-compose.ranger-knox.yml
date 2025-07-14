@@ -1,0 +1,29 @@
+services:
+  ranger-knox:
+    build:
+      context: .
+      dockerfile: Dockerfile.ranger-knox
+      args:
+        - KNOX_VERSION=${KNOX_VERSION}
+        - KNOX_PLUGIN_VERSION=${KNOX_PLUGIN_VERSION}
+    image: ranger-knox
+    container_name: ranger-knox
+    hostname: ranger-knox.example.com
+    stdin_open: true
+    tty: true
+    networks:
+      - ranger
+    ports:
+      - "8443:8443"
+    depends_on:
+      ranger:
+        condition: service_started
+      ranger-zk:
+        condition: service_started
+    environment:
+      - KNOX_VERSION
+      - KNOX_PLUGIN_VERSION
+
+networks:
+  ranger:
+    name: rangernw
