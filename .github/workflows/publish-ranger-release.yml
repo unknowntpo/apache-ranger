@@ -3,7 +3,7 @@ name: Publish Docker Image
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: write
@@ -39,30 +39,7 @@ jobs:
             ${{ runner.os }}-m2
 
       - name: Build and run Docker Compose
-        run: |
-          cd dev-support/ranger-docker
-
-          # peek users
-          cat /etc/passwd
-
-          pwd
-
-          # set some env
-          export DOCKER_BUILDKIT=1
-          export COMPOSE_DOCKER_CLI_BUILD=1
-          export RANGER_DB_TYPE=mysql
-
-          # Prevent buildx to pull remote image
-          # https://github.com/moby/buildkit/issues/2343#issuecomment-1311890308
-          docker buildx prune -f
-          docker buildx use default
-          
-          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml up --pull never
-
-          mkdir -p ./dist
-          
-          # copy package from volume to host
-          docker compose -f docker-compose.ranger-base.yml -f docker-compose.ranger-build.yml cp ranger-build:/home/ranger/dist .
+        run: "./publish-ranger-release.sh"
 
       - name: Cache Maven dependencies after build
         uses: actions/cache/save@v3
