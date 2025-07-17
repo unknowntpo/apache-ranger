@@ -1,11 +1,10 @@
-version: '3'
 services:
   ranger-tagsync:
     build:
       context: .
       dockerfile: Dockerfile.ranger-tagsync
       args:
-        - RANGER_VERSION=${RANGER_VERSION}
+        - TAGSYNC_VERSION=${TAGSYNC_VERSION}
     image: ranger-tagsync
     container_name: ranger-tagsync
     hostname: ranger-tagsync.example.com
@@ -17,7 +16,8 @@ services:
       ranger:
         condition: service_started
     environment:
-      - RANGER_VERSION
+      - TAGSYNC_VERSION
+      - DEBUG_TAGSYNC=${DEBUG_TAGSYNC:-false}
 
 networks:
   ranger:

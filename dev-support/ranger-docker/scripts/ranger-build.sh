@@ -19,7 +19,7 @@
 
 if [ "${BRANCH}" == "" ]
 then
-  BRANCH=ranger-2.1
+  BRANCH=master
 fi
 
 if [ "${GIT_URL}" == "" ]
@@ -75,6 +75,8 @@ else
 
   git clone --single-branch --branch ${BRANCH} ${GIT_URL}
 
+  echo "we are at commit $(git rev-parse HEAD)"
+
   cd /home/ranger/git/ranger
 
   for patch in `ls -1 /home/ranger/patches | sort`
@@ -84,7 +86,14 @@ else
   done
 fi
 
-mvn ${ARG_PROFILES} ${ARG_SKIPTESTS} -DskipDocs clean package
+echo "PWD $(pwd)"
+echo "Git status $(git status)"
+echo "Maven version $(mvn --version)"
+echo "We are at commit $(git rev-parse HEAD)"
+echo "JAVA_HOME=${JAVA_HOME}"
+echo "Running command: mvn ${ARG_PROFILES} ${BUILD_OPTS} ${ARG_SKIPTESTS} -DskipDocs clean package"
+
+mvn ${ARG_PROFILES} ${BUILD_OPTS} ${ARG_SKIPTESTS} -DskipDocs clean package
 
 mv -f target/version /home/ranger/dist/
 mv -f target/ranger-* /home/ranger/dist/

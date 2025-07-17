@@ -15,8 +15,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-service ssh start
+if [ "${OS_NAME}" = "UBUNTU" ]; then
+  service ssh start
+fi
 
 CREATE_HDFS_DIR=false
 
@@ -26,18 +27,29 @@ then
   su -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys" hdfs
   su -c "chmod 0600 ~/.ssh/authorized_keys" hdfs
 
+  if [ "${OS_NAME}" = "RHEL" ]; then
+    ssh-keygen -A
+    /usr/sbin/sshd
+  fi
+
   su -c "ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa" yarn
   su -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys" yarn
   su -c "chmod 0600 ~/.ssh/authorized_keys" yarn
 
+  # pdsh is unavailable with microdnf in rhel based image.
   echo "ssh" > /etc/pdsh/rcmd_default
 
-  ${RANGER_SCRIPTS}/ranger-hadoop-setup.sh
 
-  su -c "${HADOOP_HOME}/bin/hdfs namenode -format" hdfs
+  if "${RANGER_SCRIPTS}"/ranger-hadoop-setup.sh;
+  then
+    su -c "${HADOOP_HOME}/bin/hdfs namenode -format" hdfs
 
-  CREATE_HDFS_DIR=true
-  touch ${HADOOP_HOME}/.setupDone
+    CREATE_HDFS_DIR=true
+
+    touch "${HADOOP_HOME}"/.setupDone
+  else
+    echo "Ranger Hadoop Setup Script didn't complete proper execution."
+  fi
 fi
 
 su -c "${HADOOP_HOME}/sbin/start-dfs.sh" hdfs
@@ -51,4 +63,9 @@ fi
 NAMENODE_PID=`ps -ef  | grep -v grep | grep -i "org.apache.hadoop.hdfs.server.namenode.NameNode" | awk '{print $2}'`
 
 # prevent the container from exiting
-tail --pid=$NAMENODE_PID -f /dev/null
+if [ -z "$NAMENODE_PID" ]
+then
+  echo "The NameNode process probably exited, no process id found!"
+else
+  tail --pid=$NAMENODE_PID -f /dev/null
+fi
